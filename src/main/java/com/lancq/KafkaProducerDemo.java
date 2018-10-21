@@ -14,11 +14,11 @@ public class KafkaProducerDemo extends Thread {
 
     private KafkaProducer<Integer, String> producer = null;
     private String topic = null;
-    private boolean isAysnc = false;
+    private boolean isAsync = false;
 
-    public KafkaProducerDemo(String topic, boolean isAysnc) {
+    public KafkaProducerDemo(String topic, boolean isAsync) {
         this.topic = topic;
-        this.isAysnc = isAysnc;
+        this.isAsync = isAsync;
         Properties properties = new Properties();
 
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.227.129:9092,192.168.227.130:9092,192.168.227.131:9092");
@@ -27,13 +27,15 @@ public class KafkaProducerDemo extends Thread {
 
         //acks:
         //0：表示producer不需要等待broker的消息确认
-        //1：表示producer只需要获得kafka集群中的leader节点确认即
+        //1：表示producer只需要获得kafka集群中的leader节点确认即可，这个选择时延较小同时确保了leader节点确认接收成功
         //all(-1)：需要ISR中所有的Replica给予接收确认，速度最慢，安全性最高，但是由于ISR可能会缩小到仅包含一个Replica，所以设置参数为all并不能一定避免数据丢失
         properties.put(ProducerConfig.ACKS_CONFIG, "-1");
 
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.IntegerSerializer");
 
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+
+        properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, "com.lancq.MyPartition");
 
         producer = new KafkaProducer<Integer, String>(properties);
     }
@@ -43,10 +45,11 @@ public class KafkaProducerDemo extends Thread {
         int num = 0;
 
         while(num < 50){
+            System.out.println();
             String message = "message_" + num;
             System.out.println("begin send message:" + message);
 
-            if(isAysnc){//异步发送
+            if(isAsync){//异步发送
                 Callback callback = new Callback(){
                     @Override
                     public void onCompletion(RecordMetadata recordMetadata, Exception e) {

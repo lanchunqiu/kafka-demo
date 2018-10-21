@@ -1,4 +1,4 @@
-package com.lancq;
+package com.lancq.group;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,10 +13,10 @@ import java.util.Properties;
  * @Description kafka 分区测试
  * @Date 2018/7/14
  **/
-public class KafkaConsumerDemo1 extends Thread {
+public class KafkaConsumerDemo2 extends Thread {
     private KafkaConsumer<Integer,String> kafkaConsumer;
 
-    public KafkaConsumerDemo1(String topic){
+    public KafkaConsumerDemo2(String topic){
         Properties properties = new Properties();
 
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.227.129:9092,192.168.227.130:9092,192.168.227.131:9092");
@@ -41,7 +41,12 @@ public class KafkaConsumerDemo1 extends Thread {
 
         kafkaConsumer = new KafkaConsumer<Integer,String>(properties);
 
+        //订阅消息
         kafkaConsumer.subscribe(Collections.singletonList(topic));
+
+        /*//指定消费2分区的消息
+        TopicPartition topicPartition=new TopicPartition(topic,2);
+        kafkaConsumer.assign(Arrays.asList(topicPartition));*/
 
     }
 
@@ -58,6 +63,6 @@ public class KafkaConsumerDemo1 extends Thread {
     }
 
     public static void main(String[] args) {
-        new KafkaConsumerDemo1("test").start();
+        new KafkaConsumerDemo2("test").start();
     }
 }

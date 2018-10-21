@@ -25,7 +25,7 @@ public class KafkaConsumerDemo extends Thread {
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.227.129:9092,192.168.227.130:9092,192.168.227.131:9092");
 
         //不配置groupId，会抛异常
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaConsumerDemo");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaConsumerDemo1");
 
         //消费者消费消息以后自动提交，只有当消息提交以后，该消息才不会被再次接收到，还可以配合auto.commit.interval.ms控制自动提交的频
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
@@ -54,7 +54,7 @@ public class KafkaConsumerDemo extends Thread {
         while(true){
             ConsumerRecords<Integer,String> consumerRecord = kafkaConsumer.poll(1000);
             for(ConsumerRecord record : consumerRecord){
-                System.out.println("message receive:" + record.value());
+                System.out.println(record.partition()+"->"+"message receive:" + record.value());
                 //提交
                 kafkaConsumer.commitAsync();
             }

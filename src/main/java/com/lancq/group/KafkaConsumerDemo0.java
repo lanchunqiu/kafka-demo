@@ -1,4 +1,4 @@
-package com.lancq;
+package com.lancq.group;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -41,7 +41,13 @@ public class KafkaConsumerDemo0 extends Thread {
 
         kafkaConsumer = new KafkaConsumer<Integer,String>(properties);
 
+        //订阅消息
         kafkaConsumer.subscribe(Collections.singletonList(topic));
+
+        /*//指定消费0分区的消息
+        TopicPartition topicPartition=new TopicPartition(topic,0);
+        kafkaConsumer.assign(Arrays.asList(topicPartition));*/
+
 
     }
 
